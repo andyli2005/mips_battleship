@@ -14,7 +14,28 @@ extra_newline: .asciiz "\n\n" # Extra newline at end
 # Arguments: None
 # Returns: void
 zeroOut:
-    # Function prologue
+    # Function prologue 
+    la $t0, board 
+    lw $t1, board_height
+    lw $t2, board_width
+
+    li $t3, 0 # i 
+
+row_loop_for_zero: 
+    li $t4, 0 # j
+
+column_loop_for_zero:
+    mul $t5, $t3, $t2 # i * num_columns
+	add $t5, $t5, $t4 # i * num_columns + j
+    add $t5, $t5, $t0 # base_addr + (i * num_columns + j)
+    sb $0, 0($t5)
+
+    addi $t4, $t4, 1 # j++
+    blt $t4, $t2, column_loop_for_zero
+
+column_loop_for_zero_done: 
+    addi $t3, $t3, 1 # i++
+    blt $t3, $t1, row_loop_for_zero
 
 zero_done:
     # Function epilogue
@@ -67,7 +88,7 @@ row_loop:
 column_loop:
 	mul $t5, $t3, $t2 # i * num_columns
 	add $t5, $t5, $t4 # i * num_columns + j
-	add $t5, $t5, $t0 # base_addr + 4*(i * num_columns + j)
+	add $t5, $t5, $t0 # base_addr + (i * num_columns + j)
 
 	lb $a0, 0($t5)
 	addi $a0, $a0, 48 

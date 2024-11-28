@@ -71,7 +71,7 @@ column_loop:
 	add $t5, $t5, $t0 # base_addr + 4*(i * num_columns + j)
 	lw $a0, 0($t5)
 	addi $a0, $a0, 48 
-	li $v0, 1
+	li $v0, 11
 	syscall # print int
 	li $a0, ' '
 	li $v0, 11

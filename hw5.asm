@@ -90,16 +90,8 @@ piece_done:
    jr $ra
 
 clear_board: 
-    addi $sp, $sp, -4 
-    sw $ra, 0($sp)
-
     jal zeroOut # call zeroOut
-
-    
-    lw $ra, 0($sp)             
-    addi $sp, $sp, 4          
-    jr $ra
-
+    j piece_done 
 
 
    

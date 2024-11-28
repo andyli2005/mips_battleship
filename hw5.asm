@@ -91,10 +91,9 @@ piece_done:
 
 clear_board: 
     jal zeroOut # call zeroOut
+    li $s2, 0
     j piece_done 
 
-
-   
 # Function: printBoard
 # Arguments: None (uses global variables)
 # Returns: void

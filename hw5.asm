@@ -84,10 +84,24 @@ placePieceOnBoard:
     j piece_done       # Invalid type
 
 piece_done:
-   bne $s2, $0, zeroOut
+   bne $s2, $0, clear_board # if accumulated error is not zero, clear the board 
    lw $ra, 0($sp)
    addi $sp, $sp, 4
    jr $ra
+
+clear_board: 
+    addi $sp, $sp, -4 
+    sw $ra, 0($sp)
+
+    jal zeroOut # call zeroOut
+
+    
+    lw $ra, 0($sp)             
+    addi $sp, $sp, 4          
+    jr $ra
+
+
+
    
 # Function: printBoard
 # Arguments: None (uses global variables)

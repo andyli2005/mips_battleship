@@ -47,6 +47,8 @@ zero_done:
 #   $a1 - ship_num
 placePieceOnBoard:
     # Function prologue
+    addi $sp, $sp, -4 
+    sw $ra, 0($sp)
     # Load piece fields
 
     lw $t0, 0($a0) # type
@@ -63,7 +65,6 @@ placePieceOnBoard:
 
     li $s2, 0
     move $s1, $a1
-
 
     # First switch on type
     li $t0, 1
@@ -83,8 +84,10 @@ placePieceOnBoard:
     j piece_done       # Invalid type
 
 piece_done:
-   li $v0, 0 
-    jr $ra
+   lw $ra, 0($sp)
+   addi $sp, $sp, 4
+   jr $ra
+   
 # Function: printBoard
 # Arguments: None (uses global variables)
 # Returns: void
@@ -182,6 +185,8 @@ occupied:
 #   $a0 - address of piece array (5 pieces)
 test_fit:
     # Function prologue
+    addi $sp, $sp, -4 
+    sw $ra, 0($sp)
 
     li $s0, 5 # size of array 
     li $t0, 0 # i = 0
@@ -192,15 +197,17 @@ check_type_and_orientation_loop:
     add $t1, $t1, $a0 # $t1 holds address of piece array[i]
     lw $t2, 0($t1)
     li $t3, 8 
+
     bge $t2, $t3, type_out_of_bounds # type >= 8
     blez $t2, type_out_of_bounds # type <= 0
 
     lw $t2, 4($t1)
     li $t3, 5 
+    
     bge $t2, $t3, orientation_out_of_bounds # orientation >= 5
     blez $t2, orientation_out_of_bounds # orientation <= 0
 
-    addi $s0, $s0, 1 # i++ 
+    addi $t0, $t0, 1 # i++ 
     j check_type_and_orientation_loop
 
 end_check_loop:
@@ -212,15 +219,19 @@ attempt_populate_loop:
 
     sll $t1, $t0, 4 # $t1 = 16*i
     add $t1, $t1, $a0 # $t1 holds address of piece array[i]
+    addi $t2, $t0, 1 # ship_num
 
     move $a0, $t1
-    move $a1, $t0
+    move $a1, $t2
+   
     jal placePieceOnBoard 
 
-    addi $s0, $s0, 1 # i++
+    addi $t0, $t0, 1 # i++
     j attempt_populate_loop
 
 end_poulate_loop:
+    lw $ra, 0($sp)
+    addi, $sp, $sp, 4
     li $v0, 0
     jr $ra
 
@@ -232,9 +243,9 @@ orientation_out_of_bounds:
     li $v0, 4
     jr $ra
 
-
 T_orientation4:
-    move $a0, $s5          # row + 1
+    move $a0, $s5          
+    addi $a0, $a0, 1       # row + 1
     move $a1, $s6
     addi $a1, $a1, 1       # col + 1
     move $a2, $s1

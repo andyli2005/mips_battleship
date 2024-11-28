@@ -88,10 +88,10 @@ piece_done:
    j return 
 
 clear_board: 
-    jal zeroOut # call zeroOut
-    j return 
+    jal zeroOut # call zeroOut 
 
 return: 
+    move $v0, $s2
     lw $ra, 0($sp)
    addi $sp, $sp, 4
    jr $ra

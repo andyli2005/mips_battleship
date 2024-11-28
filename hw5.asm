@@ -67,7 +67,6 @@ row_loop:
 column_loop:
 	mul $t5, $t3, $t2 # i * num_columns
 	add $t5, $t5, $t4 # i * num_columns + j
-
 	add $t5, $t5, $t0 # base_addr + 4*(i * num_columns + j)
 
 	lb $a0, 0($t5)
@@ -85,7 +84,7 @@ column_loop:
 	
 column_loop_done:
     la $a0, newline 
-    li $v0, 11
+    li $v0, 4
     syscall
     
 	addi $t3, $t3, 1  # i++

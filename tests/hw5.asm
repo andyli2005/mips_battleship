@@ -84,6 +84,7 @@ placePieceOnBoard:
     j piece_done       # Invalid type
 
 piece_done:
+   bne $s2, $0, zeroOut
    lw $ra, 0($sp)
    addi $sp, $sp, 4
    jr $ra

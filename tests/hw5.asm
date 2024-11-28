@@ -67,27 +67,31 @@ row_loop:
 column_loop:
 	mul $t5, $t3, $t2 # i * num_columns
 	add $t5, $t5, $t4 # i * num_columns + j
-	sll $t5, $t5, 2   # 4 * (i * num_columns + j)  Mult by 4 b/c we have an array of 4-byte words
+
 	add $t5, $t5, $t0 # base_addr + 4*(i * num_columns + j)
-	lw $a0, 0($t5)
+
+	lb $a0, 0($t5)
 	addi $a0, $a0, 48 
+
 	li $v0, 11
 	syscall # print int
-	li $a0, ' '
-	li $v0, 11
+
+	la $a0, space
+	li $v0, 4
 	syscall # print space 
+
 	addi $t4, $t4, 1  # j++
 	blt $t4, $t2, column_loop
 	
 column_loop_done:
+    la $a0, newline 
+    li $v0, 11
+    syscall
+    
 	addi $t3, $t3, 1  # i++
 	blt $t3, $t1, row_loop
 
 row_loop_done:
-	li $a0, '\n' 
-	li $v0, 11
-	syscall
-    
     # Function epilogue
     
     jr $ra                # Return

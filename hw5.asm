@@ -28,7 +28,7 @@ column_loop_for_zero:
     mul $t5, $t3, $t2 # i * num_columns
 	add $t5, $t5, $t4 # i * num_columns + j
     add $t5, $t5, $t0 # base_addr + (i * num_columns + j)
-    sb $0, 0($t5)
+    sb $0, 0($t5) # store byte 0 at array element 
 
     addi $t4, $t4, 1 # j++
     blt $t4, $t2, column_loop_for_zero
@@ -94,7 +94,7 @@ column_loop:
 	addi $a0, $a0, 48 
 
 	li $v0, 11
-	syscall # print int
+	syscall # print ascii 
 
 	la $a0, space
 	li $v0, 4
@@ -113,7 +113,6 @@ column_loop_done:
 
 row_loop_done:
     # Function epilogue
-    
     jr $ra                # Return
 
 # Function: place_tile
@@ -126,6 +125,40 @@ row_loop_done:
 # Uses global variables: board (char[]), board_width (int), board_height (int)
 
 place_tile:
+    la $t0, board
+    move $t1, $a0 # row 
+    move $t2, $a1 # col
+    move $t3, $a2 # piece 
+    lw $t4, board_height # num_rows 
+    lw $t5, board_width # num_columns
+
+    bge $t1, $t4, out_of_bounds
+    bge $t2, $t5, out_of_bounds
+
+    bltz $t2, out_of_bounds
+    bltz $t1, out_of_bounds
+
+    mul $t6, $t1, $t5 # row * num_columns
+	add $t6, $t6, $t2 # row * num_columns + col
+	add $t6, $t6, $t0 # base_addr + (row * num_columns + col)
+
+    lb $t7, 0($t6)
+	addi $t7, $t7, 48 
+
+    li $t8, '0'
+
+    bne $t7, $t8, occupied 
+
+    sb $t3, 0($t6) # store piece at array element 
+    li $v0, 0
+    jr $ra
+
+out_of_bounds:
+    li $v0, 2 
+    jr $ra
+    
+occupied:
+    li $v0, 1
     jr $ra
 
 # Function: test_fit

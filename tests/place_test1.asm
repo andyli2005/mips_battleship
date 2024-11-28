@@ -19,7 +19,7 @@ board:  .byte
 main:
     li $a0 3
     li $a1 3
-    li $a2 7
+    li $a2 7 
 
     jal place_tile
 

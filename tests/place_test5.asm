@@ -14,15 +14,15 @@ board:  .byte
 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .asciiz "This is Professor Benz's extra space that is being used for preserving memory contents to avoid losing data"
 ship:  .word
-2, 1, 1, 6 # 1 
+2, 1, 1, 6 
 ship2:  .word
 3, 2, 3, 2
 ship3:  .word
-4, 3, 5, 4 # 5 4 
+4, 3, 5, 4 
 ship4:  .word
-5, 3, 7, 8 # 7 8
+5, 3, 7, 8
 ship5:  .word
-6, 2, 5, 12 # 5 12 
+6, 2, 5, 12 
 ship6:  .word
 1, 1, 3, 8
 

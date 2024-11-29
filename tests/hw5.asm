@@ -2,6 +2,7 @@
 space: .asciiz " "    # Space character for printing between numbers
 newline: .asciiz "\n" # Newline character
 extra_newline: .asciiz "\n\n" # Extra newline at end
+here: .ascii "here" 
 
 .text
 .globl zeroOut 
@@ -91,8 +92,8 @@ clear_board:
     jal zeroOut # call zeroOut 
 
 return: 
-    move $v0, $s2
-    lw $ra, 0($sp)
+   move $v0, $s2
+   lw $ra, 0($sp)
    addi $sp, $sp, 4
    jr $ra
 
@@ -193,55 +194,46 @@ occupied:
 #   $a0 - address of piece array (5 pieces)
 test_fit:
     # Function prologue
-    addi $sp, $sp, -4 
-    sw $ra, 0($sp)
 
-    li $s0, 5 # size of array 
-    li $t0, 0 # i = 0
-    
-check_type_and_orientation_loop: 
-    beq $s0, $t0, end_check_loop # repeat until counter == size 
-    sll $t1, $t0, 4 # $t1 = 16*i
-    add $t1, $t1, $a0 # $t1 holds address of piece array[i]
-    lw $t2, 0($t1)
-    li $t3, 8 
+    li $t0, 0               # i = 0
+    li $t1, 5               # i <= 5
+    move $t2, $a0           # base address of piece array 
+    li $t3, 16              # size of each piece struct, 16 bytes 
 
-    bge $t2, $t3, type_out_of_bounds # type >= 8
-    blez $t2, type_out_of_bounds # type <= 0
+for_loop:
+    bgt $t0, $t1, done  
 
-    lw $t2, 4($t1)
-    li $t3, 5 
-    
-    bge $t2, $t3, orientation_out_of_bounds # orientation >= 5
-    blez $t2, orientation_out_of_bounds # orientation <= 0
+    mul $t4, $t0, $t3      # i * 16 to get starting address of piece struct
+    add $t5, $t2, $t4      # base address + (i * 16) 
 
-    addi $t0, $t0, 1 # i++ 
-    j check_type_and_orientation_loop
+    move $t6, $t0
+    addi $t6, $t6, 1
 
-end_check_loop:
-    li $s0, 5 # size of array 
-    li $t0, 0 # i = 0
+    move $a0, $t5
+    move $a1, $t6
 
-attempt_populate_loop:
-    beq $s0, $t0, end_poulate_loop # repeat until counter == size 
+    addi $sp, $sp, -20      
+    sw $t0, 0($sp)          
+    sw $t1, 4($sp)
+    sw $t2, 8($sp)
+    sw $t3, 12($sp)
+    sw $ra, 16($sp)
 
-    sll $t1, $t0, 4 # $t1 = 16*i
-    add $t1, $t1, $a0 # $t1 holds address of piece array[i]
-    addi $t2, $t0, 1 # ship_num
-
-    move $a0, $t1
-    move $a1, $t2
+    jal placePieceOnBoard
    
-    jal placePieceOnBoard 
+    lw $t0, 0($sp)
+    lw $t1, 4($sp)
+    lw $t2, 8($sp)
+    lw $t3, 12($sp)
+    lw $ra, 16($sp)
+    addi $sp, $sp, 20
 
-    addi $t0, $t0, 1 # i++
-    j attempt_populate_loop
-
-end_poulate_loop:
-    lw $ra, 0($sp)
-    addi, $sp, $sp, 4
-    li $v0, 0
-    jr $ra
+    addi $t0, $t0, 1    # Increment the loop counter
+    j for_loop
+    
+done:
+    
+    jr $ra                
 
 type_out_of_bounds:
     li $v0, 4

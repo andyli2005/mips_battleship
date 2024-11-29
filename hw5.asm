@@ -208,7 +208,7 @@ check_type_and_orientation_loop:
     bge $t2, $t3, type_out_of_bounds # type >= 8
     blez $t2, type_out_of_bounds # type <= 0
 
-    lw $t2, 4($t1)
+    lw $t2, 4($t1) 
     li $t3, 5 
     
     bge $t2, $t3, orientation_out_of_bounds # orientation >= 5
@@ -223,27 +223,27 @@ end_check_loop:
     move $t2, $a0           # base address of piece array 
     li $t3, 16              # size of each piece struct, 16 bytes 
 
-for_loop:
-    bge $t0, $t1, done  
+attempt_to_populate_loop:
+    bge $t0, $t1, end_populate_loop  
     mul $t4, $t0, $t3      # i * 16 to get starting address of piece struct
     add $t5, $t2, $t4      # base address + (i * 16) 
 
-    move $t6, $t0
-    addi $t6, $t6, 1
+    move $t6, $t0 
+    addi $t6, $t6, 1       # ship_num by doing i + 1
 
-    move $a0, $t5
-    move $a1, $t6
+    move $a0, $t5          # pass the address as the first argument to placePieceOnBoard
+    move $a1, $t6          # pass ship_num as second argument to placePieceOnBoard
 
-    addi $sp, $sp, -20      
+    addi $sp, $sp, -20     # make space for all registers 
     sw $t0, 0($sp)          
     sw $t1, 4($sp)
     sw $t2, 8($sp)
     sw $t3, 12($sp)
-    sw $ra, 16($sp)
+    sw $ra, 16($sp)     
 
     jal placePieceOnBoard
    
-    lw $t0, 0($sp)
+    lw $t0, 0($sp)  # load back registers 
     lw $t1, 4($sp)
     lw $t2, 8($sp)
     lw $t3, 12($sp)
@@ -251,9 +251,9 @@ for_loop:
     addi $sp, $sp, 20
 
     addi $t0, $t0, 1    # Increment the loop counter
-    j for_loop
+    j attempt_to_populate_loop
     
-done:
+end_populate_loop:
     jr $ra                
 
 type_out_of_bounds:

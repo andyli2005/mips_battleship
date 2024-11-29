@@ -195,6 +195,29 @@ occupied:
 test_fit:
     # Function prologue
 
+    li $s0, 5 # size of array 
+    li $t0, 0 # i = 0
+    
+check_type_and_orientation_loop: 
+    beq $s0, $t0, end_check_loop # repeat until counter == size 
+    sll $t1, $t0, 4 # $t1 = 16*i
+    add $t1, $t1, $a0 # $t1 holds address of piece array[i]
+    lw $t2, 0($t1)
+    li $t3, 8 
+
+    bge $t2, $t3, type_out_of_bounds # type >= 8
+    blez $t2, type_out_of_bounds # type <= 0
+
+    lw $t2, 4($t1)
+    li $t3, 5 
+    
+    bge $t2, $t3, orientation_out_of_bounds # orientation >= 5
+    blez $t2, orientation_out_of_bounds # orientation <= 0
+
+    addi $t0, $t0, 1 # i++ 
+    j check_type_and_orientation_loop
+
+end_check_loop:
     li $t0, 0               # i = 0
     li $t1, 5               # i <= 5
     move $t2, $a0           # base address of piece array 
@@ -202,7 +225,6 @@ test_fit:
 
 for_loop:
     bge $t0, $t1, done  
-
     mul $t4, $t0, $t3      # i * 16 to get starting address of piece struct
     add $t5, $t2, $t4      # base address + (i * 16) 
 
@@ -232,7 +254,6 @@ for_loop:
     j for_loop
     
 done:
-    
     jr $ra                
 
 type_out_of_bounds:

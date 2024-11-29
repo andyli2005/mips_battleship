@@ -201,7 +201,7 @@ test_fit:
     li $t3, 16              # size of each piece struct, 16 bytes 
 
 for_loop:
-    bgt $t0, $t1, done  
+    bge $t0, $t1, done  
 
     mul $t4, $t0, $t3      # i * 16 to get starting address of piece struct
     add $t5, $t2, $t4      # base address + (i * 16) 
